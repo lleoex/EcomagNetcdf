@@ -15,7 +15,7 @@ for c in ["h", "H", "e"]:
     FMT[c] = 2
 for c in ["i", "I", "f"]:
     FMT[c] = 4
-for c in ["q", "Q"]:
+for c in ["q", "Q", "d"]:
     FMT[c] = 8
 
 
@@ -352,6 +352,14 @@ class BinaryReader:
         if count is not None:
             return self.__read_type("f", count)
         return self.__read_type("f")[0]
+    
+    def read_double(self, count=None) -> Union[float, Tuple[float]]:
+        """Reads a 64-bit float.\n
+        If count is given, will return a tuple of values instead of 1 value.
+        """
+        if count is not None:
+            return self.__read_type("d", count)
+        return self.__read_type("d")[0]
 
     def read_half_float(self, count=None) -> Union[float, Tuple[float]]:
         """Reads a 16-bit float (half-float).\n
