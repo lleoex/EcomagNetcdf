@@ -155,3 +155,7 @@ cython_debug/
 *.gpkg
 res.gpkg.gz
 20220101_res.xlsx
+EcomagNetcdf.zip
+oka.zip
+vyatka.zip
+lena.zip

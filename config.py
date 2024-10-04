@@ -26,24 +26,26 @@ vars_long_names = {
     'Tair': 'air_temperature'
 }
 
+
+
 vars_units = {
     'Qrvr': 'm3 s-1',
     'Qlat': 'm3 s-1',
-    'Def': 'Pa',
+    'Def': 'hPa',
     'EA': 'kg m-2',
     'EB': 'kg m-2',
     'ESUM': 'kg m-2',
-    'GwDep': 'm',
+    'GwDep': 'mm',
     'Pcp': 'kg m-2',
     'QQA': 'm3 s-1',
     'QQG': 'm3 s-1',
     'QQS': 'm3 s-1',
     'SnHgt': 'cm',
     'SnWE': 'kg m-2',
-    'SoilFrstDep': 'm',
-    'SoilMoist': '',
-    'SoilThawDep': 'm',
+    'SoilFrstDep': 'mm',
+    'SoilMoist': 'fraction',
+    'SoilThawDep': 'mm',
     'SubOutQ': 'm3 s-1',
-    'SubSurfWtrDep': '',
-    'Tair': 'K'
+    'SubSurfWtrDep': 'mm',
+    'Tair': 'deg C'
 }
