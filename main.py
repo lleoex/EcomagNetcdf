@@ -57,10 +57,10 @@ def read_files(filelist, kind=8):
 
 
 #dir_path = '/home/gonchukov-lv/data/emg_binary/SRV_BIN/'
-dir_path = 'C:\\usr\\data\\emg_rnl\\lena'
+#dir_path = 'c:\\usr\\data\\emg_rnl\\amur\\'
 dir_path = sys.argv[1]
 res_dir = sys.argv[2]
-
+#res_dir='amur2007'
 if not os.path.exists(res_dir):
     os.makedirs(res_dir)
 files = [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
@@ -80,10 +80,10 @@ for file in files:
 # _from, _to = read_river1()
 # _from_to = np.stack([_from, _to], axis=-1)
 
-_pixel_data, pix_nset = read_files(pixel_files, kind=8)
-_shed_data, shed_nset = read_files(shed_files, 8)
+_pixel_data, pix_nset = read_files(pixel_files, kind=4)
+#_shed_data, shed_nset = read_files(shed_files, 8)
 
-CreateNcFile(_shed_data,shed_nset, True, res_dir)
+#CreateNcFile(_shed_data,shed_nset, True, res_dir)
 CreateNcFile(_pixel_data,pix_nset, False, res_dir)
 
 #CreateShedNcFile(_shed_data, shed_nset,res_dir)
