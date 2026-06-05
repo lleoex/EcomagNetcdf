@@ -20,17 +20,17 @@ config = {
     # },
     # "SoilMoist": {
     #     "vmin": 0.3,
-    #     "vmax": 1.2,
+    #     "vmax": 5,
     #     #"title": "Влажность почвы, доля FC",
     #     "title": "",
     #     "cmap": "RdBu"
     #  },
-    #    "Qrvr": {
-    #      "vmin": 0,
-    #       "vmax": 1,
-    #       "title": "",
-    #       "cmap": "cool"
-    #   },
+       "Qrvr": {
+         "vmin": 0,
+          "vmax": 20000,
+          "title": "",
+          "cmap": "cool"
+      },
     #
     #
     # # "SnHgt": {
@@ -53,14 +53,20 @@ config = {
     #     "title": "Суммарное испарение, мм/сут",
     #     "cmap": "PuBu"
     # },
-    "Pcp": {
-        "vmin": 0,
-         "vmax": 150,
-         #"title": "Сумма осадков, мм/5сут",
-         "title":"",
-         "cmap": "PuBuGn"
-     },
-    #
+    # "Pcp": {
+    #     "vmin": 0,
+    #      "vmax": 150,
+    #      #"title": "Сумма осадков, мм/5сут",
+    #      "title":"",
+    #      "cmap": "PuBuGn"
+    #  },
+    # "Def": {
+    #     "vmin": 0,
+    #      "vmax": 40,
+    #      #"title": "Сумма осадков, мм/5сут",
+    #      "title":"",
+    #      "cmap": "PuBuGn"
+    #  },
     # "Tair": {
     #     "vmin": -40,
     #     "vmax": 40,
@@ -70,11 +76,15 @@ config = {
 }
 
 if __name__ == '__main__':
-    shp_file = 'C:\\usr\\data\\emg_rnl\\geo\\Amur_wsds2_wgs84.shp'
+    #shp_file = 'C:\\usr\\data\\emg_rnl\\geo\\Amur_wsds2_wgs84.shp'
+    #shp_file = 'd:\\gis\\geo\\Amur_wsds2_wgs84.shp'
     #shp_file = 'C:\\usr\\data\\emg_rnl\\geo\\CllsNetWork_wgs84.shp'
-    nc_file = 'C:\\Users\\gonchukov-lv\\Documents\\GitHub\\EcomagNetcdf\\amur2007\\Sheds_20070101.nc'
+    shp_file = 'd:\\gis\\geo\\CllsNetWork_wgs84.shp'
+    #nc_file = 'C:\\Users\\gonchukov-lv\\Documents\\GitHub\\EcomagNetcdf\\amur2007\\Sheds_20070101.nc'
     #nc_file = 'c:\\Users\\gonchukov-lv\\Documents\\GitHub\\EcomagNetcdf\\2008-2020_da\\River_20080101.nc'
-    dst_dir = 'amur2008_river'  # sys.argv[3]
+    nc_file = 'tmp_csv\\River_20100116.nc'
+    #nc_file = 'tmp_csv\\Sheds_20100116.nc'
+    dst_dir = 'amur2010_river_csv'  # sys.argv[3]
 
     #shp_file = sys.argv[1]
     #nc_file = sys.argv[2]
@@ -91,8 +101,8 @@ if __name__ == '__main__':
     nc = netCDF4.Dataset(nc_file)
     time_var = nc['time']
     time_arr = netCDF4.num2date(time_var[:], time_var.units)
-    watersheds_arr = nc['watersheds'][:]
-    #watersheds_arr = nc['pixels'][:]
+    #watersheds_arr = nc['watersheds'][:]
+    watersheds_arr = nc['pixels'][:]
     for vname in config:
         # vname = 'SoilMoist'
         if vname not in nc.variables:
@@ -119,17 +129,21 @@ if __name__ == '__main__':
                     not brief
                     #and time_arr[t].year in [2013]
                     #and time_arr[t].month in [10,5]
-                   and time_arr[t].day in [5,10,15,20,25,30]
+                   #and time_arr[t].day in [5,10,15,20,25,30]
+                   and t in range(211,300)
             ):
-                df = pd.DataFrame(np.vstack((watersheds_arr,
-                                             #data[t,:]
-                                             #np.average(data[t-5:t, :],axis=0)
-                                             np.sum(data[t - 5:t, :], axis=0)
-                                             )), index=['gridcode', 'value']).transpose()
-                #df = pd.DataFrame(np.vstack((watersheds_arr, data[t, :])), index=['CllId', 'value']).transpose()
+                # df = pd.DataFrame(np.vstack((watersheds_arr,
+                #                              data[t,:]
+                #                              #np.average(data[t-5:t, :],axis=0)
+                #                              #np.sum(data[t - 5:t, :], axis=0)
+                #                              )), index=['gridcode', 'value']).transpose()
+                
 
-                gdf = gpd.GeoDataFrame(df.merge(gpd_shp, on="gridcode"))
-                #gdf = gpd.GeoDataFrame(df.merge(gpd_shp, on="CllId"))
+                df = pd.DataFrame(np.vstack((watersheds_arr, data[t, :])), index=['CllId', 'value']).transpose()
+                df.to_csv(f'{time_arr[t]:%Y%m%d}.csv')
+
+                #gdf = gpd.GeoDataFrame(df.merge(gpd_shp, on="gridcode"))
+                gdf = gpd.GeoDataFrame(df.merge(gpd_shp, on="CllId"))
                 if brief:
                     w,h = 4, 3
                 else:
