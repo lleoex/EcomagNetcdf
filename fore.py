@@ -6,6 +6,8 @@ src_dir = Path(r"D:\Users\gonchukov-lv\Documents\GitHub\emg2025\EcoAmur\Archive\
 out_dir = Path(r"D:\Users\gonchukov-lv\Documents\GitHub\emg2025\EcoAmur\Archive\001\SimOut\ForecastMatrices")
 out_dir.mkdir(exist_ok=True)
 
+NO_DATA = -99
+
 csv_files = sorted(src_dir.glob("*.csv"))
 
 # Читаем каждый файл только один раз
@@ -17,7 +19,7 @@ for file in csv_files:
     df = pd.read_csv(file)
 
     # берем только последние 8 строк
-    last8 = df.iloc[-8:]
+    last8 = df.iloc[-12:]
 
     data.append(last8)
 
@@ -45,7 +47,7 @@ for site in sites:
 
         values = df[["Date", qm, qs]].to_numpy()
 
-        for lead in range(8):
+        for lead in range(0,12):
 
             dt = values[lead][0]
             obs = values[lead][1]
@@ -54,15 +56,18 @@ for site in sites:
             if dt not in rows:
                 rows[dt] = {
                     "Date": dt,
-                    "Obs": obs
+                    "Obs": None
                 }
+            
+            if pd.notna(obs) and obs != NO_DATA:
+                rows[dt]["Obs"] = obs
 
-            rows[dt][f"F{lead}"] = fcst
+            rows[dt][f"F{lead-4}"] = fcst
 
     result = pd.DataFrame(rows.values())
     result.sort_values("Date", inplace=True)
 
-    columns = ["Date", "Obs"] + [f"F{i}" for i in range(8)]
+    columns = ["Date", "Obs"] + [f"F{i}" for i in range(-4,8)]
 
     for col in columns:
         if col not in result.columns:
@@ -71,7 +76,7 @@ for site in sites:
     result = result[columns]
 
     result.to_csv(
-        out_dir / f"{site}_forecast_matrix.csv",
+        out_dir / f"{site}_forecast_matrix12.csv",
         index=False
     )
 
