@@ -25,12 +25,12 @@ config = {
     #     "title": "",
     #     "cmap": "RdBu"
     #  },
-       "Qrvr": {
-         "vmin": 0,
-          "vmax": 20000,
-          "title": "",
-          "cmap": "cool"
-      },
+    #    "Qrvr": {
+    #      "vmin": 0,
+    #       "vmax": 20000,
+    #       "title": "",
+    #       "cmap": "cool"
+    #   },
     #
     #
     # # "SnHgt": {
@@ -73,18 +73,27 @@ config = {
     #     "title": "T, град С",
     #     "cmap": "jet"
     # }
+    "WYLDmm": {
+         "vmin": 0,
+         "vmax": 3,
+         "title": "mm",
+         "cmap": "cool"
+     }
 }
 
 if __name__ == '__main__':
     #shp_file = 'C:\\usr\\data\\emg_rnl\\geo\\Amur_wsds2_wgs84.shp'
     #shp_file = 'd:\\gis\\geo\\Amur_wsds2_wgs84.shp'
     #shp_file = 'C:\\usr\\data\\emg_rnl\\geo\\CllsNetWork_wgs84.shp'
-    shp_file = 'd:\\gis\\geo\\CllsNetWork_wgs84.shp'
+    #shp_file = 'd:\\gis\\geo\\CllsNetWork_wgs84.shp'
+    shp_file = 'D:\\Users\\gonchukov-lv\\Documents\\Yandex.Disk\\gis\\SWAT\\SHPs\\Watershed.shp'
     #nc_file = 'C:\\Users\\gonchukov-lv\\Documents\\GitHub\\EcomagNetcdf\\amur2007\\Sheds_20070101.nc'
     #nc_file = 'c:\\Users\\gonchukov-lv\\Documents\\GitHub\\EcomagNetcdf\\2008-2020_da\\River_20080101.nc'
-    nc_file = 'tmp_csv\\River_20100116.nc'
+    #nc_file = 'tmp_csv\\River_20100116.nc'
+    nc_file = 'output_sub.nc'
     #nc_file = 'tmp_csv\\Sheds_20100116.nc'
-    dst_dir = 'amur2010_river_csv'  # sys.argv[3]
+    #dst_dir = 'amur2010_river_csv'  # sys.argv[3]
+    dst_dir = 'razdol'  # sys.argv[3]
 
     #shp_file = sys.argv[1]
     #nc_file = sys.argv[2]
@@ -99,10 +108,12 @@ if __name__ == '__main__':
     # os.mkdir(dst_dir)
     gpd_shp = gpd.read_file((shp_file))
     nc = netCDF4.Dataset(nc_file)
-    time_var = nc['time']
+    #time_var = nc['time']
+    time_var = nc['valid_date']
     time_arr = netCDF4.num2date(time_var[:], time_var.units)
     #watersheds_arr = nc['watersheds'][:]
-    watersheds_arr = nc['pixels'][:]
+    #watersheds_arr = nc['pixels'][:]
+    watersheds_arr = nc['sub'][:]
     for vname in config:
         # vname = 'SoilMoist'
         if vname not in nc.variables:
@@ -120,17 +131,29 @@ if __name__ == '__main__':
         #avg_cell_value = np.max(data_src,axis=0)
         #data = data_src / avg_cell_value
 
-        data = nc[vname][:] * mult
+        ####data = nc[vname][:] * mult
+
+        var = nc[vname]
+
+        # Приводим данные к порядку (дата, объект)
+        data = np.moveaxis(
+            var[:],
+            (
+                var.dimensions.index("valid_date"),
+                var.dimensions.index("sub"),
+            ),
+            (0, 1),
+        ) * mult
 
 
         for t in range(len(time_arr)):
             #if (brief and time_arr[t].day == 15 and time_arr[t].month in [2,8]) or (not brief and time_arr[t].day in [5,15,25]) :
             if (brief and time_arr[t].day == 15 and time_arr[t].month in [2, 8]) or (
                     not brief
-                    #and time_arr[t].year in [2013]
+                    and time_arr[t].year in [2013]
                     #and time_arr[t].month in [10,5]
                    #and time_arr[t].day in [5,10,15,20,25,30]
-                   and t in range(211,300)
+                   #and t in range(211,300)
             ):
                 # df = pd.DataFrame(np.vstack((watersheds_arr,
                 #                              data[t,:]
@@ -139,11 +162,12 @@ if __name__ == '__main__':
                 #                              )), index=['gridcode', 'value']).transpose()
                 
 
-                df = pd.DataFrame(np.vstack((watersheds_arr, data[t, :])), index=['CllId', 'value']).transpose()
+                #df = pd.DataFrame(np.vstack((watersheds_arr, data[t, :])), index=['CllId', 'value']).transpose()
+                df = pd.DataFrame(np.vstack((watersheds_arr, data[t, :])), index=['GRIDCODE', 'value']).transpose()
                 df.to_csv(f'{time_arr[t]:%Y%m%d}.csv')
 
                 #gdf = gpd.GeoDataFrame(df.merge(gpd_shp, on="gridcode"))
-                gdf = gpd.GeoDataFrame(df.merge(gpd_shp, on="CllId"))
+                gdf = gpd.GeoDataFrame(df.merge(gpd_shp, on="GRIDCODE"))
                 if brief:
                     w,h = 4, 3
                 else:
@@ -166,7 +190,7 @@ if __name__ == '__main__':
                          column='value',
                          cmap=config[vname]["cmap"],
                          #
-                         #legend=not brief,
+                         legend=not brief,
                          #linewidth=gdf['ShtrlOrd']-1,
                          # cax=cax,
                          legend_kwds={"orientation": "horizontal", "fraction": 0.05},

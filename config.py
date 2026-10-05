@@ -3,6 +3,7 @@ shed_vars = ['Def', 'EA', 'EB', 'ESUM', 'GwDep',
              'Pcp', 'QQA', 'QQG', 'QQS',
              'SnHgt', 'SnWE', 'SoilFrstDep', 'SoilMoist', 'SoilThawDep',
              'SubOutQ', 'SubSurfWtrDep', 'Tair']
+sub_vars = ['WYLDmm']
 
 vars_long_names = {
     'Qrvr': 'water_volume_transport_in_river_channel',
@@ -23,7 +24,8 @@ vars_long_names = {
     'SoilThawDep': 'depth_at_top_of_frozen_ground',
     'SubOutQ': 'water_volume_transport_in_river_channel',
     'SubSurfWtrDep': '',
-    'Tair': 'air_temperature'
+    'Tair': 'air_temperature',
+    'WYLDmm' : 'WYLDmm'
 }
 
 
@@ -47,5 +49,6 @@ vars_units = {
     'SoilThawDep': 'mm',
     'SubOutQ': 'm3 s-1',
     'SubSurfWtrDep': 'mm',
-    'Tair': 'deg C'
+    'Tair': 'deg C',
+    'WYLDmm' : 'mm'
 }
