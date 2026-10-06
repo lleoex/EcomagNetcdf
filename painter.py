@@ -150,7 +150,7 @@ if __name__ == '__main__':
             #if (brief and time_arr[t].day == 15 and time_arr[t].month in [2,8]) or (not brief and time_arr[t].day in [5,15,25]) :
             if (brief and time_arr[t].day == 15 and time_arr[t].month in [2, 8]) or (
                     not brief
-                    and time_arr[t].year in [2013]
+                    and time_arr[t].year in [2023]
                     #and time_arr[t].month in [10,5]
                    #and time_arr[t].day in [5,10,15,20,25,30]
                    #and t in range(211,300)

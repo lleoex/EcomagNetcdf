@@ -80,9 +80,9 @@ hru = read_swat(hru_file)
 sub = read_swat(sub_file)
 rch = read_swat(rch_file)
 
-save_netcdf(hru, "output_hru.nc", "2013-01-01", "hru")
-save_netcdf(sub, "output_sub.nc", "2013-01-01", "sub")
-save_netcdf(rch, "output_rch.nc", "2013-01-01", "rch")
+save_netcdf(hru, "output_hru.nc", "2011-01-01", "hru")
+save_netcdf(sub, "output_sub.nc", "2011-01-01", "sub")
+save_netcdf(rch, "output_rch.nc", "2011-01-01", "rch")
 
 sub = read_swat(sub_file)
 rch = read_swat(rch_file)
