@@ -1,11 +1,12 @@
 import pandas as pd
-
+from pathlib import Path
 
 def save_netcdf(
     df: pd.DataFrame,
     output_path: str,
     start_date: str,
     object_field: str,
+    csv_path: str | None = None,
 ) -> None:
     """
     Измерения: object_field и valid_date.
@@ -56,6 +57,27 @@ def save_netcdf(
             "valid_date": {"dtype": "int32", "_FillValue": None},
         },
     )
+
+    data["date"] = (
+        start + pd.to_timedelta(data["valid_date"], unit="D")
+    ).dt.strftime("%Y-%m-%d")
+
+    if csv_path is None:
+        csv_path = str(Path(output_path).with_suffix(".csv"))
+
+    # Идентификатор и даты — первые столбцы
+    first_columns = [object_field, "valid_date", "date"]
+    other_columns = [
+        column for column in data.columns
+        if column not in first_columns
+    ]
+
+    data[first_columns + other_columns].to_csv(
+        csv_path,
+        index=False,
+        encoding="utf-8-sig",
+    )
+    
 
 def read_swat(file_path:str):
    
