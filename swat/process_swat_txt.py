@@ -1,5 +1,21 @@
-import pandas as pd
+import sys
 from pathlib import Path
+
+import pandas as pd
+
+# paths_config.py лежит в корне проекта — добавляем корень в путь поиска модулей
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from paths_config import (
+    SWAT_HRU_FILE,
+    SWAT_HRU_NC,
+    SWAT_RCH_FILE,
+    SWAT_RCH_NC,
+    SWAT_START_DATE,
+    SWAT_SUB_FILE,
+    SWAT_SUB_NC,
+)
+
 
 def save_netcdf(
     df: pd.DataFrame,
@@ -11,7 +27,7 @@ def save_netcdf(
     """
     Измерения: object_field и valid_date.
     valid_date — число дней с start_date.
-    Записи каждого объекта должны идти ежедневно и хронологически.
+    Записи каждого объекта должны иежедневно и хронологическидти .
     """
     data = df.copy()
     start = pd.Timestamp(start_date).normalize()
@@ -94,20 +110,16 @@ def read_swat(file_path:str):
 
 
 
-hru_file = "D:\\data\\SWAT_Razdol\\output\\output.hru"
-sub_file = "D:\\data\\SWAT_Razdol\\output\\output.sub"
-rch_file = "D:\\data\\SWAT_Razdol\\output\\output.rch"
+hru = read_swat(str(SWAT_HRU_FILE))
+sub = read_swat(str(SWAT_SUB_FILE))
+rch = read_swat(str(SWAT_RCH_FILE))
 
-hru = read_swat(hru_file)
-sub = read_swat(sub_file)
-rch = read_swat(rch_file)
+save_netcdf(hru, str(SWAT_HRU_NC), SWAT_START_DATE, "hru")
+save_netcdf(sub, str(SWAT_SUB_NC), SWAT_START_DATE, "sub")
+save_netcdf(rch, str(SWAT_RCH_NC), SWAT_START_DATE, "rch")
 
-save_netcdf(hru, "output_hru.nc", "2011-01-01", "hru")
-save_netcdf(sub, "output_sub.nc", "2011-01-01", "sub")
-save_netcdf(rch, "output_rch.nc", "2011-01-01", "rch")
-
-sub = read_swat(sub_file)
-rch = read_swat(rch_file)
+sub = read_swat(str(SWAT_SUB_FILE))
+rch = read_swat(str(SWAT_RCH_FILE))
 
 print(hru)
 

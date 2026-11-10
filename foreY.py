@@ -1,9 +1,10 @@
-from pathlib import Path
 import pandas as pd
 import re
 
-src_dir = Path(r"D:\Users\gonchukov-lv\Documents\GitHub\emg2025\EcoAmur\Archive\001\SimOut")
-out_dir = Path(r"D:\Users\gonchukov-lv\Documents\GitHub\emg2025\EcoAmur\Archive\001\SimOut\ForecastMatricesByYear")
+from paths_config import FORECAST_MATRIX_BY_YEAR_DIR, FORECAST_SRC_DIR
+
+src_dir = FORECAST_SRC_DIR
+out_dir = FORECAST_MATRIX_BY_YEAR_DIR
 out_dir.mkdir(exist_ok=True)
 
 csv_files = sorted(src_dir.glob("*.csv"))

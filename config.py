@@ -50,5 +50,6 @@ vars_units = {
     'SubOutQ': 'm3 s-1',
     'SubSurfWtrDep': 'mm',
     'Tair': 'deg C',
-    'WYLDmm' : 'mm'
+    'WYLDmm' : 'mm',
+    'SWmm' : 'mm'
 }

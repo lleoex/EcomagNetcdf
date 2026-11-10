@@ -4,9 +4,10 @@ import geopandas as gpd
 import pandas as pd
 import numpy as np
 
+from paths_config import CELLS_GPKG, JOIN_RESULT_GPKG, RIVER1_CSV
+
 def join_data_to_geom(pixel_data: dict[str: dict[str : dict[int:np.ndarray]]], pixels: np.ndarray):
-    geom_file = 'C:\\usr\\data\\emg_rnl\\geo\\cells3857.gpkg'
-    geom_data = gpd.read_file(geom_file)
+    geom_data = gpd.read_file(CELLS_GPKG)
     geom_data['CllId'] = geom_data['CllId'].astype(np.int64)
     gdf = gpd.GeoDataFrame()
     for dts_str in pixel_data:
@@ -38,12 +39,11 @@ def join_data_to_geom(pixel_data: dict[str: dict[str : dict[int:np.ndarray]]], p
             #finalframe.to_file(f'{dt}_res.gpkg',  driver="GPKG")
             gdf = pd.concat([gdf,finalframe])
         print(f'{datetime.today()} \t start writing to file')
-        gdf.to_file('res3857.gpkg', driver="GPKG", engine="pyogrio")
+        gdf.to_file(JOIN_RESULT_GPKG, driver="GPKG", engine="pyogrio")
         print(f'{datetime.today()} \t end writing to file')
 
 def read_river1():
-    file='C:\\usr\\data\\emg_rnl\\river1.csv'
-    df = pd.read_csv(file)[['from','to']]
+    df = pd.read_csv(RIVER1_CSV)[['from','to']]
 
     return df['from'],df['to']
 

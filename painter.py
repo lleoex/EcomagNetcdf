@@ -8,6 +8,8 @@ import netCDF4
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+from paths_config import PAINTER_NC_FILE, PAINTER_SHAPE_FILE
+
 # Press the green button in the gutter to run the script.
 config = {
     # "SoilFrstDep": {
@@ -73,25 +75,33 @@ config = {
     #     "title": "T, град С",
     #     "cmap": "jet"
     # }
-    "WYLDmm": {
+    # "WYLDmm": {
+    #      "vmin": 0,
+    #      "vmax": 3,
+    #      "title": "mm",
+    #      "cmap": "cool"
+    #  },
+# "SWmm": {
+#          "vmin": 0,
+#          "vmax": 600,
+#          "title": "mm",
+#          "cmap": "jet"
+#      },
+
+"FLOW_OUTcms": {
          "vmin": 0,
-         "vmax": 3,
-         "title": "mm",
-         "cmap": "cool"
+         "vmax": 5000,
+         "title": "cms",
+         "cmap": "jet"
      }
+#FLOW_OUTcms
+
 }
 
 if __name__ == '__main__':
-    #shp_file = 'C:\\usr\\data\\emg_rnl\\geo\\Amur_wsds2_wgs84.shp'
-    #shp_file = 'd:\\gis\\geo\\Amur_wsds2_wgs84.shp'
-    #shp_file = 'C:\\usr\\data\\emg_rnl\\geo\\CllsNetWork_wgs84.shp'
-    #shp_file = 'd:\\gis\\geo\\CllsNetWork_wgs84.shp'
-    shp_file = 'D:\\Users\\gonchukov-lv\\Documents\\Yandex.Disk\\gis\\SWAT\\SHPs\\Watershed.shp'
-    #nc_file = 'C:\\Users\\gonchukov-lv\\Documents\\GitHub\\EcomagNetcdf\\amur2007\\Sheds_20070101.nc'
-    #nc_file = 'c:\\Users\\gonchukov-lv\\Documents\\GitHub\\EcomagNetcdf\\2008-2020_da\\River_20080101.nc'
-    #nc_file = 'tmp_csv\\River_20100116.nc'
-    nc_file = 'output_sub.nc'
-    #nc_file = 'tmp_csv\\Sheds_20100116.nc'
+    # Пути к векторному слою и исходному NetCDF заданы в paths_config.py
+    shp_file = PAINTER_SHAPE_FILE
+    nc_file = str(PAINTER_NC_FILE)
     #dst_dir = 'amur2010_river_csv'  # sys.argv[3]
     dst_dir = 'razdol'  # sys.argv[3]
 
@@ -113,7 +123,7 @@ if __name__ == '__main__':
     time_arr = netCDF4.num2date(time_var[:], time_var.units)
     #watersheds_arr = nc['watersheds'][:]
     #watersheds_arr = nc['pixels'][:]
-    watersheds_arr = nc['sub'][:]
+    watersheds_arr = nc['rch'][:]
     for vname in config:
         # vname = 'SoilMoist'
         if vname not in nc.variables:
@@ -140,7 +150,7 @@ if __name__ == '__main__':
             var[:],
             (
                 var.dimensions.index("valid_date"),
-                var.dimensions.index("sub"),
+                var.dimensions.index("rch"),
             ),
             (0, 1),
         ) * mult
@@ -164,10 +174,10 @@ if __name__ == '__main__':
 
                 #df = pd.DataFrame(np.vstack((watersheds_arr, data[t, :])), index=['CllId', 'value']).transpose()
                 df = pd.DataFrame(np.vstack((watersheds_arr, data[t, :])), index=['GRIDCODE', 'value']).transpose()
-                df.to_csv(f'{time_arr[t]:%Y%m%d}.csv')
+                #df.to_csv(f'{time_arr[t]:%Y%m%d}.csv')
 
                 #gdf = gpd.GeoDataFrame(df.merge(gpd_shp, on="gridcode"))
-                gdf = gpd.GeoDataFrame(df.merge(gpd_shp, on="GRIDCODE"))
+                gdf = gpd.GeoDataFrame(df.merge(gpd_shp, left_on="GRIDCODE", right_on="GRID_CODE"))
                 if brief:
                     w,h = 4, 3
                 else:

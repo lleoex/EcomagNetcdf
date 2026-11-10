@@ -3,6 +3,7 @@ import os
 import numpy as np
 from nc_functions import CreatePixelNcFile, CreateShedNcFile, CreateNcFile
 from config import pixel_vars, shed_vars
+from paths_config import ECOMAG_BINARY_DIR, ECOMAG_RESULTS_DIR
 #from geopack import read_river1
 #from datetime import datetime
 
@@ -56,11 +57,10 @@ def read_files(filelist, kind=8):
     return result, Nset
 
 
-#dir_path = '/home/gonchukov-lv/data/emg_binary/SRV_BIN/'
-#dir_path = 'c:\\usr\\data\\emg_rnl\\amur\\'
-dir_path = sys.argv[1]
-res_dir = sys.argv[2]
-#res_dir='amur2007'
+# Пути по умолчанию берутся из paths_config.py,
+# аргументы командной строки их переопределяют
+dir_path = sys.argv[1] if len(sys.argv) > 1 else str(ECOMAG_BINARY_DIR)
+res_dir = sys.argv[2] if len(sys.argv) > 2 else str(ECOMAG_RESULTS_DIR)
 if not os.path.exists(res_dir):
     os.makedirs(res_dir)
 files = [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]

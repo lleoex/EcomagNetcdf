@@ -1,9 +1,10 @@
-from pathlib import Path
 import pandas as pd
 import re
 
-src_dir = Path(r"D:\Users\gonchukov-lv\Documents\GitHub\emg2025\EcoAmur\Archive\001\SimOut")          # каталог с исходными CSV
-out_dir = Path(r"D:\Users\gonchukov-lv\Documents\GitHub\emg2025\EcoAmur\Archive\001\SimOut\ForecastMatrices")
+from paths_config import FORECAST_MATRIX_DIR, FORECAST_SRC_DIR
+
+src_dir = FORECAST_SRC_DIR      # каталог с исходными CSV
+out_dir = FORECAST_MATRIX_DIR   # каталог с прогнозными матрицами
 out_dir.mkdir(exist_ok=True)
 
 NO_DATA = -99
